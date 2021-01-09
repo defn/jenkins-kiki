@@ -1,4 +1,4 @@
-def call(Map param [:], Closure body) {
+def call(Map param, Closure body) {
   goPrep()
 
   withCredentials([[
