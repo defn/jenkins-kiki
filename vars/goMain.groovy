@@ -1,12 +1,3 @@
-def jenkinsSecrets = [[
-  path: 'kv/jenkins/common',
-  secretValues: [
-    [vaultKey: 'GITHUB_TOKEN'],
-    [vaultKey: 'DOCKER_USERNAME'],
-    [vaultKey: 'DOCKER_PASSWORD']
-  ]
-]]
-
 def call(Map param, Closure body) {
   goPrep()
 
@@ -22,6 +13,15 @@ def call(Map param, Closure body) {
     env.UNWRAPPED_SID= sh(returnStdout: true, script: 'set +x; /env.sh vault unwrap -field=secret_id ${WRAPPED_SID}; set -x').trim()
 
     def pipelineConfiguration = creds(param.roleId, env.UNWRAPPED_SID)
+
+    def jenkinsSecrets = [[
+      path: 'kv/jenkins/common',
+      secretValues: [
+        [vaultKey: 'GITHUB_TOKEN'],
+        [vaultKey: 'DOCKER_USERNAME'],
+        [vaultKey: 'DOCKER_PASSWORD']
+      ]
+    ]]
 
     withVault([vaultSecrets: jenkinsSecrets]) {
       withVault([vaultSecrets: param.pipelineSecrets, configuration: pipelineConfiguration]) {
