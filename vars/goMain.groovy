@@ -1,27 +1,34 @@
 def call(pipelineRoleId, vaultSecrets, nmJob, nmBinary, nmDocker, vendorPrefix) {
-  stage ('Secrets') {
-    def PIPELINE_SECRET_ID= ''
-    env.PIPELINE_SECRET_ID = sh(returnStdout: true, script: "./ci/build ${nmJob}").trim()
+  withCredentials([[
+    $class: 'VaultTokenCredentialBinding',
+    credentialsId: 'VaultToken',
+    vaultAddr: env.VAULT_ADDR ]]) {
 
-    def pipelineConfiguration = creds(pipelineRoleId, env.PIPELINE_SECRET_ID)
+    stage ('Secrets') {
+      def PIPELINE_SECRET_ID= ''
+      env.PIPELINE_SECRET_ID = sh(returnStdout: true, script: "./ci/build ${nmJob}").trim()
 
-    withVault([vaultSecrets: pipelineSecrets, configuration: pipelineConfiguration]) {
-      sh("env | grep MEH")
+      def pipelineConfiguration = creds(pipelineRoleId, env.PIPELINE_SECRET_ID)
+
+      withVault([vaultSecrets: pipelineSecrets, configuration: pipelineConfiguration]) {
+        sh("env | grep MEH")
+      }
     }
-  }
 
-  withVault([vaultSecrets: vaultSecrets]) {
-    withEnv(["DOCKER_CONFIG=/tmp/docker/${env.BUILD_TAG}"]) {
-      if (env.TAG_NAME) {
-        goRelease()
+    withVault([vaultSecrets: vaultSecrets]) {
+      withEnv(["DOCKER_CONFIG=/tmp/docker/${env.BUILD_TAG}"]) {
+        if (env.TAG_NAME) {
+          goRelease()
 
-        stage('Test Docker image') {
-          sh "/env.sh docker run --rm --entrypoint /" + nmBinary + "  " + nmDocker + ":" + vendorPrefix + "${env.GORELEASER_CURRENT_TAG.minus('v')}-amd64"
+          stage('Test Docker image') {
+            sh "/env.sh docker run --rm --entrypoint /" + nmBinary + "  " + nmDocker + ":" + vendorPrefix + "${env.GORELEASER_CURRENT_TAG.minus('v')}-amd64"
+          }
+        }
+        else {
+          goBuild()
         }
       }
-      else {
-        goBuild()
-      }
     }
+
   }
 }
