@@ -10,7 +10,7 @@ def call(nmRole, pipelineRoleId, jenkinsSecrets, pipelineSecrets, Closure body) 
     env.WRAPPED_SID = sh(returnStdout: true, script: "/env.sh vault write -field=wrapping_token -wrap-ttl=60s -f auth/approle/role/${nmRole}/secret-id").trim()
   
     def UNWRAPPED_SID = ''
-    env.UNWRAPPED_SID= sh(returnStdout: true, script: '/env.sh vault unwrap -field=secret_id ${WRAPPED_SID}').trim()
+    env.UNWRAPPED_SID= sh(returnStdout: true, script: 'set +x; /env.sh vault unwrap -field=secret_id ${WRAPPED_SID}; set -x').trim()
 
     def pipelineConfiguration = creds(pipelineRoleId, env.UNWRAPPED_SID)
 
