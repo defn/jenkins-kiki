@@ -17,7 +17,7 @@ def call(pipelineRoleId, jenkinsSecrets, pipelineSecrets, nmJob, nmBinary, nmDoc
       }
     }
 
-    withVault([jenkinsSecrets: jenkinsSecrets]) {
+    withVault([vaultSecrets: jenkinsSecrets]) {
       withEnv(["DOCKER_CONFIG=/tmp/docker/${env.BUILD_TAG}"]) {
         if (env.TAG_NAME) {
           goRelease()
