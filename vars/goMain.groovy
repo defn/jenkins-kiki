@@ -12,7 +12,7 @@ def call(pipelineRoleId, jenkinsSecrets, pipelineSecrets, nmJob, nmBinary, nmDoc
 
       def pipelineConfiguration = creds(pipelineRoleId, env.PIPELINE_SECRET_ID)
 
-      withVault([jenkinsSecrets: pipelineSecrets, configuration: pipelineConfiguration]) {
+      withVault([vaultSecrets: pipelineSecrets, configuration: pipelineConfiguration]) {
         sh("env | grep MEH")
       }
     }
