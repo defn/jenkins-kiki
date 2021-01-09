@@ -1,4 +1,4 @@
-def call(pipelineRoleId, vaultSecrets, nmJob, nmBinary, nmDocker, vendorPrefix) {
+def call(pipelineRoleId, jenkinsSecrets, pipelineSecrets, nmJob, nmBinary, nmDocker, vendorPrefix) {
   goPrep()
 
   withCredentials([[
@@ -12,12 +12,12 @@ def call(pipelineRoleId, vaultSecrets, nmJob, nmBinary, nmDocker, vendorPrefix) 
 
       def pipelineConfiguration = creds(pipelineRoleId, env.PIPELINE_SECRET_ID)
 
-      withVault([vaultSecrets: pipelineSecrets, configuration: pipelineConfiguration]) {
+      withVault([jenkinsSecrets: pipelineSecrets, configuration: pipelineConfiguration]) {
         sh("env | grep MEH")
       }
     }
 
-    withVault([vaultSecrets: vaultSecrets]) {
+    withVault([jenkinsSecrets: jenkinsSecrets]) {
       withEnv(["DOCKER_CONFIG=/tmp/docker/${env.BUILD_TAG}"]) {
         if (env.TAG_NAME) {
           goRelease()
