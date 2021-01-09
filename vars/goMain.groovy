@@ -15,26 +15,24 @@ def call(Map param, Closure body) {
 
       def pipelineConfiguration = creds(param.roleId, env.UNWRAPPED_SID)
 
-      def jenkinsSecrets = [[
+      def jenkinsSecrets = [
         path: 'kv/jenkins/common',
         secretValues: [
           [vaultKey: 'GITHUB_TOKEN'],
           [vaultKey: 'DOCKER_USERNAME'],
           [vaultKey: 'DOCKER_PASSWORD']
         ]
-      ]]
+      ]
 
-      withVault([vaultSecrets: jenkinsSecrets]) {
-        withVault([vaultSecrets: param.pipelineSecrets, configuration: pipelineConfiguration]) {
-          withEnv(["DOCKER_CONFIG=/tmp/docker/${env.BUILD_TAG}"]) {
-            if (env.TAG_NAME) {
-              goRelease()
-              body()
-            }
-            else {
-              goBuild()
-              body()
-            }
+      withVault([vaultSecrets: param.pipelineSecrets + jenkinsSecrets, configuration: pipelineConfiguration]) {
+        withEnv(["DOCKER_CONFIG=/tmp/docker/${env.BUILD_TAG}"]) {
+          if (env.TAG_NAME) {
+            goRelease()
+            body()
+          }
+          else {
+            goBuild()
+            body()
           }
         }
       }
