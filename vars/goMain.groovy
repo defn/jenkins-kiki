@@ -1,4 +1,4 @@
-def call(pipelineRoleId, jenkinsSecrets, pipelineSecrets, nmJob, Closure body) {
+def call(nmRole, pipelineRoleId, jenkinsSecrets, pipelineSecrets, Closure body) {
   goPrep()
 
   withCredentials([[
@@ -6,9 +6,13 @@ def call(pipelineRoleId, jenkinsSecrets, pipelineSecrets, nmJob, Closure body) {
     credentialsId: 'VaultToken',
     vaultAddr: env.VAULT_ADDR ]]) {
 
-    def PIPELINE_SECRET_ID= ''
-    env.PIPELINE_SECRET_ID = sh(returnStdout: true, script: "./ci/build ${nmJob}").trim()
-    def pipelineConfiguration = creds(pipelineRoleId, env.PIPELINE_SECRET_ID)
+    def WRAPPED_SID = ''
+    env.WRAPPED_SID = sh(returnStdout: true, script: "/env.sh vault write -field=wrapping_token -wrap-ttl=60s -f auth/approle/role/${nmRole}/secret-id").trim()
+  
+    def UNWRAPPED_SID = ''
+    env.UNWRAPPED_SID= sh(returnStdout: true, script: '/env.sh vault unwrap -field=secret_id ${WRAPPED_SID}').trim()
+
+    def pipelineConfiguration = creds(pipelineRoleId, env.UNWRAPPED_SID)
 
     withVault([vaultSecrets: jenkinsSecrets]) {
       withVault([vaultSecrets: pipelineSecrets, configuration: pipelineConfiguration]) {
