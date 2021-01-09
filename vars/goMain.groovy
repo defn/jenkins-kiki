@@ -1,4 +1,6 @@
 def call(pipelineRoleId, vaultSecrets, nmJob, nmBinary, nmDocker, vendorPrefix) {
+  goPrep()
+
   withCredentials([[
     $class: 'VaultTokenCredentialBinding',
     credentialsId: 'VaultToken',
@@ -29,6 +31,7 @@ def call(pipelineRoleId, vaultSecrets, nmJob, nmBinary, nmDocker, vendorPrefix) 
         }
       }
     }
-
   }
+
+  goClean()
 }
