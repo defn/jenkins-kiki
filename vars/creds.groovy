@@ -5,7 +5,7 @@ import com.datapipe.jenkins.vault.credentials.VaultAppRoleCredential
 def call(secretId) {
     VaultAppRoleCredential pipelineCredential = new VaultAppRoleCredential(
     CredentialsScope.GLOBAL,
-    NM_JOB + '-vault', NM_JOB + '-vault',
+    env.BUILD_TAG, env.BUILD_TAG,
     pipelineRoleId,
     Secret.fromString(secretId),
     "approle"
