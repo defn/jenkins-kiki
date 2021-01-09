@@ -1,4 +1,6 @@
 def call() {
+  sh("/env.sh figlet -f /j/chunky.flf prep")
+
   checkout scm
 
   if (env.TAG_NAME == null) {

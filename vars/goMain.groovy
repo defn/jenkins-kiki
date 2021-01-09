@@ -7,6 +7,8 @@ def call(Map param, Closure body) {
       credentialsId: 'VaultToken',
       vaultAddr: env.VAULT_ADDR ]]) {
 
+      sh("/env.sh figlet -f /j/chunky.flf secrets")
+
       def WRAPPED_SID = ''
       env.WRAPPED_SID = sh(returnStdout: true, script: "/env.sh vault write -field=wrapping_token -wrap-ttl=60s -f auth/approle/role/${param.role}/secret-id").trim()
     
