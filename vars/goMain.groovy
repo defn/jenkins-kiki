@@ -1,3 +1,12 @@
+def jenkinsSecrets = [[
+  path: 'kv/jenkins/common',
+  secretValues: [
+    [vaultKey: 'GITHUB_TOKEN'],
+    [vaultKey: 'DOCKER_USERNAME'],
+    [vaultKey: 'DOCKER_PASSWORD']
+  ]
+]]
+
 def call(Map param, Closure body) {
   goPrep()
 
@@ -14,7 +23,7 @@ def call(Map param, Closure body) {
 
     def pipelineConfiguration = creds(param.roleId, env.UNWRAPPED_SID)
 
-    withVault([vaultSecrets: param.jenkinsSecrets]) {
+    withVault([vaultSecrets: jenkinsSecrets]) {
       withVault([vaultSecrets: param.pipelineSecrets, configuration: pipelineConfiguration]) {
         withEnv(["DOCKER_CONFIG=/tmp/docker/${env.BUILD_TAG}"]) {
           if (env.TAG_NAME) {
