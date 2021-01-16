@@ -1,3 +1,5 @@
+def success = false
+
 def call(Map param, Closure body) {
   node() {
     try {
@@ -43,6 +45,8 @@ def call(Map param, Closure body) {
 
       goClean()
     }
+
+    success = true
   }
   finally {
     if (success) {
