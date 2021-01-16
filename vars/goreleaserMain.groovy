@@ -44,16 +44,16 @@ def call(Map param, Closure body) {
       }
 
       goClean()
-    }
 
-    success = true
-  }
-  finally {
-    if (success) {
-      sh("/env.sh figlet -f /j/broadway.flf ok")
+      success = true
     }
-    else {
-      sh("/env.sh figlet -f /j/broadway.flf fail")
+    finally {
+      if (success) {
+        sh("/env.sh figlet -f /j/broadway.flf ok")
+      }
+      else {
+        sh("/env.sh figlet -f /j/broadway.flf fail")
+      }
     }
   }
 }
