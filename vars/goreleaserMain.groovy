@@ -31,14 +31,7 @@ def call(Map param, Closure body) {
 
         withVault([vaultSecrets: param.pipelineSecrets + jenkinsSecrets, configuration: pipelineConfiguration]) {
           withEnv(["DOCKER_CONFIG=/tmp/docker/${env.BUILD_TAG}"]) {
-            if (env.TAG_NAME) {
-              goRelease()
-              body()
-            }
-            else {
-              goBuild()
-              body()
-            }
+            body()
           }
         }
       }
