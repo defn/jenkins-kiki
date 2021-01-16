@@ -49,10 +49,10 @@ def call(Map param, Closure body) {
     }
     finally {
       if (success) {
-        sh("/env.sh figlet -f /j/broadway.flf ok")
+        sh("/env.sh figlet -f /j/broadway.flf ok; echo")
       }
       else {
-        sh("/env.sh figlet -f /j/broadway.flf fail")
+        sh("/env.sh figlet -f /j/broadway.flf fail; echo")
       }
     }
   }
