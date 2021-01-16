@@ -1,7 +1,7 @@
-def success = false
-
 def call(Map param, Closure body) {
   node() {
+    def success = false
+
     try {
       goPrep()
 
