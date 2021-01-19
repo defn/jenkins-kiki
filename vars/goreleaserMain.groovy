@@ -12,8 +12,10 @@ def call(Map param, Closure body = null) {
 
         sh("/env.sh figlet -f /j/chunky.flf secrets")
 
+        def role = param.name.replaceAll("/", "--")
+
         def WRAPPED_SID = ''
-        env.WRAPPED_SID = sh(returnStdout: true, script: "/env.sh vault write -field=wrapping_token -wrap-ttl=60s -f auth/approle/role/${param.role}/secret-id").trim()
+        env.WRAPPED_SID = sh(returnStdout: true, script: "/env.sh vault write -field=wrapping_token -wrap-ttl=60s -f auth/approle/role/${role}/secret-id").trim()
       
         def UNWRAPPED_SID = ''
         env.UNWRAPPED_SID= sh(returnStdout: true, script: 'set +x; /env.sh vault unwrap -field=secret_id ${WRAPPED_SID}; set -x').trim()
@@ -29,7 +31,10 @@ def call(Map param, Closure body = null) {
           ]
         ]
 
-        withVault([vaultSecrets: param.pipelineSecrets + jenkinsSecrets, configuration: pipelineConfiguration]) {
+        def pipelineSecrets = param.pipelineSecrets
+        pipelineSecrets.path = 'kv/pipeline/' + role
+
+        withVault([vaultSecrets: pipelineSecrets + jenkinsSecrets, configuration: pipelineConfiguration]) {
           withEnv([
             "DOCKER_CONFIG=/tmp/docker/${env.BUILD_TAG}",
             "VAULT_ADDR=", "VAULT_TOKEN=", "GITHUB_TOKEN=", "DOCKER_USERNAME=",
