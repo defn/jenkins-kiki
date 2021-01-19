@@ -30,7 +30,10 @@ def call(Map param, Closure body) {
         ]
 
         withVault([vaultSecrets: param.pipelineSecrets + jenkinsSecrets, configuration: pipelineConfiguration]) {
-          withEnv(["DOCKER_CONFIG=/tmp/docker/${env.BUILD_TAG}"]) {
+          withEnv([
+            "DOCKER_CONFIG=/tmp/docker/${env.BUILD_TAG}"
+            "VAULT_ADDR=", "VAULT_TOKEN=", "GITHUB_TOKEN=", "DOCKER_USERNAME=",
+            "DOCKER_PASSWORD=", "UNWRAPPED_SID=", "WRAPPED_SID="]) {
             body()
           }
         }
