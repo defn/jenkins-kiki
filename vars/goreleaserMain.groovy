@@ -1,4 +1,4 @@
-def call(Map param, Closure body) {
+def call(Map param, Closure body = null) {
   node() {
     def success = false
 
@@ -34,7 +34,23 @@ def call(Map param, Closure body) {
             "DOCKER_CONFIG=/tmp/docker/${env.BUILD_TAG}",
             "VAULT_ADDR=", "VAULT_TOKEN=", "GITHUB_TOKEN=", "DOCKER_USERNAME=",
             "DOCKER_PASSWORD=", "UNWRAPPED_SID=", "WRAPPED_SID="]) {
-            body()
+            if (body != null) {
+              body()
+            }
+            else {
+              docker.image("defn/jenkins-go").inside {
+                stage('Test: Go') {
+                  sh("make ci-go-test")
+                }
+
+                if (env.TAG_NAME) {
+                  goRelease()
+                }
+                else {
+                  goBuild()
+                }
+              }
+            }
           }
         }
       }
