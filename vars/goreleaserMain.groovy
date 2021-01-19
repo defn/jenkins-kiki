@@ -33,7 +33,7 @@ def call(Map param, Closure body = null) {
 
         def pipelineSecrets = [[
           path: 'kv/pipeline/' + role,
-          secretValues: param.secretValues
+          secretValues: (param.secretValues != null ? param.secretValues : [])
         ]]
 
         withVault([vaultSecrets: pipelineSecrets + jenkinsSecrets, configuration: pipelineConfiguration]) {
