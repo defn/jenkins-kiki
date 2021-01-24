@@ -51,7 +51,7 @@ def call(Map p = null, Closure body = null) {
               body()
             }
             else {
-              if file.exists(".goreleaser.yml") {
+              if (file.exists(".goreleaser.yml")) {
                 goreleaserMain()
               }
             }
