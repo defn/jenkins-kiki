@@ -1,3 +1,7 @@
+def call(Closure body = null) {
+  kiki(null, body)
+}
+
 def call(Map p = null, Closure body = null) {
   node() {
     def success = false
