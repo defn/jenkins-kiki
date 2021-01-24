@@ -48,7 +48,9 @@ def call(Map p = null, Closure body = null) {
             "VAULT_ADDR=", "VAULT_TOKEN=", "GITHUB_TOKEN=", "DOCKER_USERNAME=",
             "DOCKER_PASSWORD=", "UNWRAPPED_SID=", "WRAPPED_SID="]) {
             if (body != null) {
-              body()
+              ansiColor('xterm-256color') {
+                body()
+              }
             }
             else {
               if (fileExists(".goreleaser.yml")) {
