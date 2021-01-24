@@ -68,10 +68,10 @@ def call(Map p = null, Closure body = null) {
     finally {
       ansiColor('xterm-256color') {
         if (success) {
-          sh("set +x; /env.sh figlet -f /j/broadway.flf pass | lolcat -f; echo")
+          figlet('pass')
         }
         else {
-          sh("set +x; /env.sh figlet -f /j/broadway.flf fail | lolcat -f; echo")
+          figlet('fail')
         }
       }
     }

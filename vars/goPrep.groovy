@@ -1,5 +1,5 @@
 def call() {
-  sh("/env.sh figlet -f /j/chunky.flf prep")
+  figlet("prep")
 
   checkout scm
 
