@@ -1,6 +1,12 @@
-def call(Map param, Closure body = null) {
+def call(Map p = null, Closure body = null) {
   node() {
     def success = false
+
+    def param = p
+
+    if (param == null) {
+      param = readYaml file: 'jenkins.yaml'
+    }
 
     try {
       goPrep()
