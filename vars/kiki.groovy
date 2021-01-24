@@ -16,7 +16,7 @@ def call(Map p = null, Closure body = null) {
         credentialsId: 'VaultToken',
         vaultAddr: env.VAULT_ADDR ]]) {
 
-        sh("/env.sh figlet -f /j/chunky.flf secrets")
+        figlet("secrets")
 
         def role = param.name.replaceAll("/", "--")
 
@@ -68,10 +68,10 @@ def call(Map p = null, Closure body = null) {
     finally {
       ansiColor('xterm-256color') {
         if (success) {
-          figlet('pass')
+          lolcat('pass')
         }
         else {
-          figlet('fail')
+          lolcat('fail')
         }
       }
     }
